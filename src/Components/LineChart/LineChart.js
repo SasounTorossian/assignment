@@ -34,16 +34,26 @@ const LineChart = () => {
         //**** X AXIS ****/
         // Find low and high x values to determine min/max values on x axis.
         let xMin = d3.min(data, (d) => Math.min(d.time) );
-        let xMax = d3.max(data, (d) => Math.max(d.time) );
-                        
+        let xMax = d3.max(data, (d) => Math.max(d.time) );               
+
+        // Function to subtract days to the first data point, in order to shift it away from y axis.
+        const subtractDays = (date, days) => {
+            let result = new Date(date);
+            result.setDate(result.getDate() - days);
+            return result;
+          }
+
         // X axis. Use scaleTime to map input times to x axis width.
         const xScale = d3.scaleTime() 
-                        .domain([xMin, xMax])
+                        .domain([subtractDays(xMin, 1), xMax])
                         .range([0, width])
 
+        var timeFormat = d3.timeFormat("%a %Y");
         // Generate bottom x axis using xScale function.
         svg.append("g") 
-            .call(d3.axisBottom(xScale)) 
+            .call(d3.axisBottom(xScale)
+                    .tickFormat(timeFormat)) 
+                    // .ticks(d3.timeDay.every(1))
             .attr("transform", "translate(0," + height + ")") 
 
 
@@ -54,7 +64,7 @@ const LineChart = () => {
             
         // Y axis. Use scaleLinear to map input values to y axis height.
         const yScale = d3.scaleLinear()
-                        .domain([yMin, yMax])
+                        .domain([(yMin*0.99), yMax]) // Add 1% buffer to start y axis
                         .range([height, 0])
 
         // Generate left y axis using yScale function.
