@@ -8,66 +8,85 @@ const LineChart = () => {
     const d3Chart = useRef()
 
     useEffect(() => {
+        // Import JSON file and extract data.
         const data = dataObject.Data.Data
         console.log(data);
 
-        data.forEach(function(d) { d.time = new Date(d.time * 1000); });
+        // Convert unix timestamp into Date objects.
+        data.forEach((d) => d.time = new Date(d.time * 1000));
 
-        const margin = {top: 50, right: 50, bottom: 30, left: 50}
-        const width = parseInt(d3.select("#LineChart").style("width"))
-        const height = parseInt(d3.select("#LineChart").style("height"))
+        // Set constants for svg canvas size and margins.
+        const margin = {top: 70, right: 70, bottom: 70, left: 70}
+        const width = 1000 - margin.left - margin.right
+        const height = 500 - margin.top - margin.bottom
+        const widthSvg = width + margin.left + margin.right
+        const heightSvg = height + margin.left + margin.right
 
         // Set up chart
         const svg = d3.select(d3Chart.current)
-                        .attr("width", 1300)
-                        .attr("height", 600)
+                        .attr("width", widthSvg) 
+                        .attr("height", heightSvg)
                         .style("background-color", "grey")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-        // x axis
-        const x = d3.scaleTime()
-                    .domain(d3.extent(data, function(d){return d.time} ))
-                    .range([0, width])
 
+        //**** X AXIS ****/
+        // Find low and high x values to determine min/max values on x axis.
+        let xMin = d3.min(data, (d) => Math.min(d.time) );
+        let xMax = d3.max(data, (d) => Math.max(d.time) );
+                        
+        // X axis. Use scaleTime to map input times to x axis width.
+        const xScale = d3.scaleTime() 
+                        .domain([xMin, xMax])
+                        .range([0, width])
+
+        // Generate bottom x axis using xScale function.
+        svg.append("g") 
+            .call(d3.axisBottom(xScale)) 
+            .attr("transform", "translate(0," + height + ")") 
+
+
+        //**** Y AXIS ****/
+        // Find low and high y values to determine min/max values on y axis.
+        let yMin = d3.min(data, (d) => Math.min(d.low) );
+        let yMax = d3.max(data, (d) => Math.max(d.high) );
+            
+        // Y axis. Use scaleLinear to map input values to y axis height.
+        const yScale = d3.scaleLinear()
+                        .domain([yMin, yMax])
+                        .range([height, 0])
+
+        // Generate left y axis using yScale function.
         svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
+            .call(d3.axisLeft(yScale))
 
-        // y axis
-        var yMin = d3.min(data, function(d){ return Math.min(d.low); });
-        var yMax = d3.max(data, function(d){ return Math.max(d.high); });
-
-        console.log(yMax);
-
-        const y = d3.scaleLinear()
-                    .domain([yMin, yMax])
-                    .range([height - margin.top, 0])
-
-        svg.append("g")
-            .call(d3.axisLeft(y))
-
-        svg.selectAll("vertLines")
+        //**** RENDER DATA POINTS ****/
+        // Create vertical lines based on input data.
+        svg.selectAll("verticalLines")
             .data(data)
             .enter()
             .append("line")
-            .attr("x1", function(d){return(x(d.time))})
-            .attr("x2", function(d){return(x(d.time))})
-            .attr("y1", function(d){return(y(d.low))})
-            .attr("y2", function(d){return(y(d.high))})
+            .attr("x1", (d) => xScale(d.time) )
+            .attr("x2", (d) => xScale(d.time) )
+            .attr("y1", (d) => yScale(d.low) )
+            .attr("y2", (d) => yScale(d.high) )
             .attr("stroke", "black")
             .style("width", 10)
 
+        // Superimpose boxes on previously rendered lines.
+        const boxWidth = 10
         svg.selectAll("boxes")
             .data(data)
             .enter()
             .append("rect")
-            .attr("x", function(d,i) { return x(d.time) })
-            .attr("y", function(d,i) { return y(Math.max(d.open, d.close)); })
-            .attr("height", function(d,i) { return y(Math.min(d.open, d.close)) - y(Math.max(d.open, d.close)) })
-            .attr("width", 10 )
+            .attr("x", (d,i) => xScale(d.time) )
+            .attr("y", (d,i) => yScale(Math.max(d.open, d.close)) )
+            .attr("width", boxWidth )
+            .attr("height", (d,i) => yScale(Math.min(d.open, d.close)) - yScale(Math.max(d.open, d.close)) )
             .attr("stroke", "black")
-            .style("fill", function(d){ return d.open > d.close ? "red" : "green"} )
+            .attr("fill", (d) => d.open > d.close ? "red" : "green" )
+            .attr("transform", "translate("+ (-boxWidth/2) + ", 0)") 
     })
 
     return (
