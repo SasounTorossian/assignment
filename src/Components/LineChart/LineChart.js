@@ -26,7 +26,7 @@ const LineChart = () => {
         const svg = d3.select(d3Chart.current)
                         .attr("width", widthSvg) 
                         .attr("height", heightSvg)
-                        .style("background-color", "grey")
+                        .style("background-color", "rgba(51,51,51,1)")
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
@@ -58,12 +58,14 @@ const LineChart = () => {
                     .ticks(d3.timeDay.every(1))
                     .tickFormat(timeFormat)) //TODO: Move to separate axis.
             .attr("transform", "translate(0," + height + ")") 
+            .attr("color", "white")
             .selectAll("text")	
             .attr("text-anchor", "end")
             .attr("dx", "-8px")
             .attr("dy", "1px")
             .attr("transform", "rotate(-50)")
             .attr("font-size", "15px")
+            .attr("color", "white")
 
         // Create label for x axis
         svg.append("text")             
@@ -87,6 +89,7 @@ const LineChart = () => {
         svg.append("g")
             .call(d3.axisLeft(yScale))
             .attr("font-size", "15px")
+            .attr("color", "white")
 
         // Create label for y axis
         svg.append("text")
@@ -107,7 +110,7 @@ const LineChart = () => {
             .attr("x2", (d) => xScale(d.time) )
             .attr("y1", (d) => yScale(d.low) )
             .attr("y2", (d) => yScale(d.high) )
-            .attr("stroke", "black")
+            .attr("stroke", "white")
             .style("width", 10)
 
         // Superimpose boxes on previously rendered lines.
@@ -120,10 +123,8 @@ const LineChart = () => {
             .attr("y", (d,i) => yScale(Math.max(d.open, d.close)) )
             .attr("width", boxWidth )
             .attr("height", (d,i) => yScale(Math.min(d.open, d.close)) - yScale(Math.max(d.open, d.close)) )
-            .attr("stroke", "black")
             .attr("fill", (d) => d.open > d.close ? "red" : "green" )
             .attr("transform", "translate("+ (-boxWidth/2) + ", 0)") 
-
     })
 
     return (
