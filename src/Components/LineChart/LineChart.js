@@ -16,7 +16,7 @@ const LineChart = () => {
         data.forEach((d) => d.time = new Date(d.time * 1000));
 
         // Set constants for svg canvas size and margins.
-        const margin = {top: 70, right: 70, bottom: 70, left: 70}
+        const margin = {top: 100, right: 100, bottom: 100, left: 100}
         const width = 1000 - margin.left - margin.right
         const height = 500 - margin.top - margin.bottom
         const widthSvg = width + margin.left + margin.right
@@ -62,9 +62,16 @@ const LineChart = () => {
             .attr("text-anchor", "end")
             .attr("dx", "-8px")
             .attr("dy", "1px")
-            .attr("transform", "rotate(-65)")
+            .attr("transform", "rotate(-50)")
             .attr("font-size", "15px")
 
+        // Create label for x axis
+        svg.append("text")             
+            .attr("y", height + margin.top)
+            .attr("x", width/2)
+            .attr("dy", "-0.5em")
+            .attr("fill", "white")
+            .text("Date")
 
         //**** Y AXIS ****/
         // Find low and high y values to determine min/max values on y axis.
@@ -73,13 +80,22 @@ const LineChart = () => {
             
         // Y axis. Use scaleLinear to map input values to y axis height.
         const yScale = d3.scaleLinear()
-                        .domain([(yMin*0.99), yMax]) // Add 1% buffer to start y axis
+                        .domain([(yMin*0.95), yMax]) // Add 5% buffer to start y axis
                         .range([height, 0])
 
         // Generate left y axis using yScale function.
         svg.append("g")
             .call(d3.axisLeft(yScale))
             .attr("font-size", "15px")
+
+        // Create label for y axis
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("x", 0 - (height/2))
+            .attr("y", 0 - margin.left)
+            .attr("dy", "1.1em")
+            .attr("fill", "white")
+            .text("Value"); 
 
         //**** RENDER DATA POINTS ****/
         // Create vertical lines based on input data.
@@ -107,6 +123,7 @@ const LineChart = () => {
             .attr("stroke", "black")
             .attr("fill", (d) => d.open > d.close ? "red" : "green" )
             .attr("transform", "translate("+ (-boxWidth/2) + ", 0)") 
+
     })
 
     return (
