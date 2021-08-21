@@ -19,17 +19,24 @@
     font-size: 18px;
 }
 
-#Header .name {
-    display: flex;
-    align-items: center;
-}
-
+/* Title */
 #Header .title img{
-    width: 140px;
+    width: 150px;
     height: auto;
 }
 
+/* Git */
 #Header .git {
     display: flex;
     align-items: center;
+}
+
+#Header .git img {
+    width: 50px;
+    height: auto;
+    transition: 0.2s ease-in-out;
+}
+
+#Header .git img:hover {
+    transform: scale(1.1);
 }
