@@ -1,8 +1,9 @@
 #LineChart {
-    width: 80vw;
-    height: 50vh;
+    font-family: 'Montserrat', sans-serif;
+    /* width: 80vw;
+    height: 50vh; */
 }
 
-.tick {
+/* .tick {
     display: flex;
-}
+} */
