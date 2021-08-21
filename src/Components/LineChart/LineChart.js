@@ -1,16 +1,14 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect } from "react"
 import * as d3 from "d3"
 import "./LineChart.css"
 import dataObject from "./data.json"
 
 const LineChart = () => {
 
-    const d3Chart = useRef()
-
     useEffect(() => {
         // Import JSON file and extract data.
         const data = dataObject.Data.Data
-        console.log(data);
+        // console.log(data);
 
         // Convert unix timestamp into Date objects.
         data.forEach((d) => d.time = new Date(d.time * 1000));
@@ -23,7 +21,7 @@ const LineChart = () => {
         const heightSvg = height + margin.left + margin.right
 
         // Set up chart
-        const svg = d3.select(d3Chart.current)
+        const svg = d3.select("svg")
                         .attr("width", widthSvg) 
                         .attr("height", heightSvg)
                         .style("background-color", "rgba(51,51,51,1)")
@@ -43,20 +41,22 @@ const LineChart = () => {
             return result;
           }
 
-        // X axis. Use scaleTime to map input times to x axis width.
+        // X Scale. Use scaleTime to map input times to x axis width.
         const xScale = d3.scaleTime() 
                         .domain([subtractDays(xMin, 1), xMax])
                         .range([0, width])
 
         // Format the x axis ticks.
-        // let timeFormat = d3.timeFormat("%d %a %Y")
         let timeFormat = d3.timeFormat("%d-%m-%y")
+
+        // X Axis. Use xScale to generate x axis markings
+        const xAxis = d3.axisBottom(xScale)
+                        .ticks(d3.timeDay.every(1))
+                        .tickFormat(timeFormat)
 
         // Generate bottom x axis using xScale function.
         svg.append("g") 
-            .call(d3.axisBottom(xScale)
-                    .ticks(d3.timeDay.every(1))
-                    .tickFormat(timeFormat)) //TODO: Move to separate axis.
+            .call(xAxis)
             .attr("transform", "translate(0," + height + ")") 
             .attr("color", "white")
             .selectAll("text")	
@@ -80,14 +80,17 @@ const LineChart = () => {
         let yMin = d3.min(data, (d) => Math.min(d.low) );
         let yMax = d3.max(data, (d) => Math.max(d.high) );
             
-        // Y axis. Use scaleLinear to map input values to y axis height.
+        // Y Scale. Use scaleLinear to map input values to y axis height.
         const yScale = d3.scaleLinear()
                         .domain([(yMin*0.95), yMax]) // Add 5% buffer to start y axis
                         .range([height, 0])
 
+        // X Axis. Use yScale to generate y axis markings
+        const yAxis = d3.axisLeft(yScale)
+
         // Generate left y axis using yScale function.
         svg.append("g")
-            .call(d3.axisLeft(yScale))
+            .call(yAxis)
             .attr("font-size", "15px")
             .attr("color", "white")
 
@@ -129,7 +132,7 @@ const LineChart = () => {
 
     return (
         <div id="LineChart">
-            <svg ref={d3Chart}></svg>
+            <svg></svg>
         </div>
     )
 }
