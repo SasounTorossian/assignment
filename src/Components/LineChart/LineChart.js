@@ -48,13 +48,22 @@ const LineChart = () => {
                         .domain([subtractDays(xMin, 1), xMax])
                         .range([0, width])
 
-        var timeFormat = d3.timeFormat("%a %Y");
+        // Format the x axis ticks.
+        // let timeFormat = d3.timeFormat("%d %a %Y")
+        let timeFormat = d3.timeFormat("%d-%m-%y")
+
         // Generate bottom x axis using xScale function.
         svg.append("g") 
             .call(d3.axisBottom(xScale)
-                    .tickFormat(timeFormat)) 
-                    // .ticks(d3.timeDay.every(1))
+                    .ticks(d3.timeDay.every(1))
+                    .tickFormat(timeFormat)) //TODO: Move to separate axis.
             .attr("transform", "translate(0," + height + ")") 
+            .selectAll("text")	
+            .attr("text-anchor", "end")
+            .attr("dx", "-8px")
+            .attr("dy", "1px")
+            .attr("transform", "rotate(-65)")
+            .attr("font-size", "15px")
 
 
         //**** Y AXIS ****/
@@ -70,6 +79,7 @@ const LineChart = () => {
         // Generate left y axis using yScale function.
         svg.append("g")
             .call(d3.axisLeft(yScale))
+            .attr("font-size", "15px")
 
         //**** RENDER DATA POINTS ****/
         // Create vertical lines based on input data.
