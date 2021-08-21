@@ -14,11 +14,11 @@ const LineChart = () => {
         data.forEach((d) => d.time = new Date(d.time * 1000));
 
         // Set constants for svg canvas size and margins.
-        const margin = {top: 100, right: 100, bottom: 100, left: 100}
+        const margin = {top: 50, right: 50, bottom: 100, left: 100}
         const width = 1000 - margin.left - margin.right
         const height = 500 - margin.top - margin.bottom
         const widthSvg = width + margin.left + margin.right
-        const heightSvg = height + margin.left + margin.right
+        const heightSvg = height + margin.top + margin.bottom
 
         // Set up chart
         const svg = d3.select("svg")
@@ -31,8 +31,8 @@ const LineChart = () => {
 
         //**** X AXIS ****/
         // Find low and high x values to determine min/max values on x axis.
-        let xMin = d3.min(data, (d) => Math.min(d.time) );
-        let xMax = d3.max(data, (d) => Math.max(d.time) );               
+        let xMin = d3.min(data, (d) => d.time);
+        let xMax = d3.max(data, (d) => d.time);               
 
         // Function to subtract days to the first data point, in order to shift it away from y axis.
         const subtractDays = (date, days) => {
@@ -71,14 +71,14 @@ const LineChart = () => {
         svg.append("text")             
             .attr("y", height + margin.top)
             .attr("x", width/2)
-            .attr("dy", "-0.5em")
+            .attr("dy", "2em")
             .attr("fill", "white")
             .text("Date")
 
         //**** Y AXIS ****/
         // Find low and high y values to determine min/max values on y axis.
-        let yMin = d3.min(data, (d) => Math.min(d.low) );
-        let yMax = d3.max(data, (d) => Math.max(d.high) );
+        let yMin = d3.min(data, (d) => d.low)
+        let yMax = d3.max(data, (d) => d.high)
             
         // Y Scale. Use scaleLinear to map input values to y axis height.
         const yScale = d3.scaleLinear()
@@ -99,7 +99,7 @@ const LineChart = () => {
             .attr("transform", "rotate(-90)")
             .attr("x", 0 - (height/2))
             .attr("y", 0 - margin.left)
-            .attr("dy", "1.1em")
+            .attr("dy", "2em")
             .attr("fill", "white")
             .text("Value"); 
 
