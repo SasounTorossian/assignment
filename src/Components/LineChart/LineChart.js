@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import * as d3 from "d3"
 import "./LineChart.css"
 import dataObject from "./data.json"
-import { text } from "d3"
+import { image, text } from "d3"
 
 const LineChart = () => {
 
@@ -124,6 +124,18 @@ const LineChart = () => {
             const time = d.target.__data__.time
             const date = timeFormat(time)
 
+            // Determine colour of "open" and "close" text
+            let colourOpen
+            let colourClose
+            if(open > close) {
+                colourOpen = "gain"
+                colourClose = "loss"
+            }
+            else {
+                colourOpen = "loss"
+                colourClose = "gain"
+            }
+
             // Transition tooltip div into view.
             tooltip.transition()
                     .duration(300)
@@ -131,13 +143,13 @@ const LineChart = () => {
                     .style("display", "block")
 
             // Place tooltip relative to box chart, and display relevant data.
-            tooltip.style("left", (xScale(time) + 185) + "px")		
+            tooltip.style("left", (d.pageX + 15) + "px")		
                     .style("top", (d.pageY - 25) + "px")
-                    .html("<span class='data_key high'>High: </span>" + "<span class='data_value'>" + high + "</span>" + "<br/>" + 
-                            "<span class='data_key low'>Low: </span>" + "<span class='data_value'>" + low + "</span>" + "<br/>" +
-                            "<span class='data_key open'>Open: </span>" + "<span class='data_value'>" + open + "</span>" + "<br/>" +
-                            "<span class='data_key close'>Close: </span>" + "<span class='data_value'>" + close + "</span>" + "<br/>" +
-                            "<span class='data_key date'>Date: </span>" + "<span class='data_value'>" + date  + "</span>")
+                    .html(d => `<span class='data_key high'>High: </span><span class='data_value'>${high}</span><br/>` +
+                                `<span class='data_key low'>Low: </span><span class='data_value'>${low}</span><br/>` +
+                                `<span class='data_key open ${colourOpen}'>Open: </span><span class='data_value'>${open}</span><br/>` + 
+                                `<span class='data_key close ${colourClose}'>Close: </span><span class='data_value'>${close}</span><br/>` + 
+                                `<span class='data_key date'>Date: </span><span class='data_value'>${date}</span>`)
         }
 
         // Function for mouse hovering off element.
