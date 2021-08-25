@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import * as d3 from "d3"
 import "./LineChart.css"
 import dataObject from "./data.json"
+import { text } from "d3"
 
 const LineChart = () => {
 
@@ -103,6 +104,51 @@ const LineChart = () => {
             .attr("fill", "white")
             .text("Value"); 
 
+        //**** MOUSE HOVER INFO ****/
+        // Create tooltip div to appear when hovering over data-point.
+        let tooltip = d3.select("body")
+                        .append("div")
+                        .attr("class", "tooltip")
+                        .style("position", "absolute")
+                        .style("z-index", "10")
+                        .style("opacity", 0)
+                        .style("display", "none")
+
+        // Function for mouse hovering over element. 
+        const handleMouseEnter = (d, i) => {
+            // Get all relevant data from hovered element.
+            const high = d.target.__data__.high
+            const low = d.target.__data__.low
+            const open = d.target.__data__.open
+            const close = d.target.__data__.close
+            const time = d.target.__data__.time
+            const date = timeFormat(time)
+
+            // Transition tooltip div into view.
+            tooltip.transition()
+                    .duration(300)
+                    .style("opacity", 1)
+                    .style("display", "block")
+
+            // Place tooltip relative to box chart, and display relevant data.
+            tooltip.style("left", (xScale(time) + 185) + "px")		
+                    .style("top", (d.pageY - 25) + "px")
+                    .html("high: " + high + "<br/>" + 
+                            "low: " + low + "<br/>" +
+                            "open: " + open + "<br/>" +
+                            "close: " + close + "<br/>" +
+                            "date: " + date )
+        }
+
+        // Function for mouse hovering off element.
+        const handleMouseLeave = (d, i) => {
+            // Transition tooltip div out of view.
+            tooltip.transition()
+                    .duration(300)
+                    .style("opacity", 0)
+                    .style("display", "none")
+        }
+
         //**** RENDER DATA POINTS ****/
         // Create vertical lines based on input data.
         svg.selectAll("verticalLines")
@@ -115,9 +161,14 @@ const LineChart = () => {
             .attr("y2", (d) => yScale(d.high) )
             .attr("stroke", "white")
             .style("width", 10)
+            .on("mouseenter", handleMouseEnter)
+            .on("mouseleave", handleMouseLeave)
 
         // Superimpose boxes on previously rendered lines.
         const boxWidth = 10
+        const crimson = "rgb(220, 20, 60)"
+        const forestGreen = "rgb(34, 139, 34)"
+        
         svg.selectAll("boxes")
             .data(data)
             .enter()
@@ -126,9 +177,11 @@ const LineChart = () => {
             .attr("y", (d,i) => yScale(Math.max(d.open, d.close)) )
             .attr("width", boxWidth )
             .attr("height", (d,i) => yScale(Math.min(d.open, d.close)) - yScale(Math.max(d.open, d.close)) )
-            .attr("fill", (d) => d.open > d.close ? "red" : "green" )
+            .attr("fill", (d) => d.open > d.close ? crimson : forestGreen )
             .attr("transform", "translate("+ (-boxWidth/2) + ", 0)") 
-    })
+            .on("mouseenter", handleMouseEnter)
+            .on("mouseleave", handleMouseLeave)
+        })
 
     return (
         <div id="LineChart">
