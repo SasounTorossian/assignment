@@ -12,9 +12,9 @@
 	align-items: center;
 	justify-content: space-between;
 
-	background: linear-gradient(90deg, rgba(57,197,139,1) 0%, rgba(51,51,51,1) 100%);
+	background: linear-gradient(45deg, rgba(57,197,139,1) 0%, rgba(51,51,51,1) 100%);
 	background-size: 400% 400%;
-	animation: slowFade 15s ease infinite;
+	animation: slowFade 20s ease-in-out infinite;
 }
 
 /* Animation that slowly fades the background colour towards lighter and darker sections */
