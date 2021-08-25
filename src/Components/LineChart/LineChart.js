@@ -133,11 +133,11 @@ const LineChart = () => {
             // Place tooltip relative to box chart, and display relevant data.
             tooltip.style("left", (xScale(time) + 185) + "px")		
                     .style("top", (d.pageY - 25) + "px")
-                    .html("high: " + high + "<br/>" + 
-                            "low: " + low + "<br/>" +
-                            "open: " + open + "<br/>" +
-                            "close: " + close + "<br/>" +
-                            "date: " + date )
+                    .html("<span class='data_key high'>High: </span>" + "<span class='data_value'>" + high + "</span>" + "<br/>" + 
+                            "<span class='data_key low'>Low: </span>" + "<span class='data_value'>" + low + "</span>" + "<br/>" +
+                            "<span class='data_key open'>Open: </span>" + "<span class='data_value'>" + open + "</span>" + "<br/>" +
+                            "<span class='data_key close'>Close: </span>" + "<span class='data_value'>" + close + "</span>" + "<br/>" +
+                            "<span class='data_key date'>Date: </span>" + "<span class='data_value'>" + date  + "</span>")
         }
 
         // Function for mouse hovering off element.
@@ -168,7 +168,7 @@ const LineChart = () => {
         const boxWidth = 10
         const crimson = "rgb(220, 20, 60)"
         const forestGreen = "rgb(34, 139, 34)"
-        
+
         svg.selectAll("boxes")
             .data(data)
             .enter()

@@ -2,10 +2,45 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+#LineChart svg {
+    border-radius: 10px;
+}
+
 .tooltip {
-    padding: 7px;
-    border-radius: 5px;
-    
-    color: white;
-    background-color: rgb(65, 65, 65);
+    padding: 9px;
+    border-radius: 10px;
+    line-height: 1.6em;
+
+    background-color: rgb(75, 75, 75);
+}
+
+.data_key {
+    color: #ddd;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.data_value {
+    color: #ddd;
+    font-size: 16px;
+}
+
+.high {
+    color: #98FB98;
+}
+
+.low  {
+    color: #FA8072;
+}
+
+.open {
+    color: #008000;
+}
+
+.close {
+    color: #B22222;
+}
+
+.date {
+    color: #20B2AA;
 }
